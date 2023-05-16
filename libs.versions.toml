@@ -1,0 +1,70 @@
+[versions]
+# https://insert-koin.io/docs/setup/koin#ktor
+koinKtorVersion = "3.4.0"
+# https://github.com/ktorio/ktor/releases
+ktorVersion = "2.2.4"
+
+kmongoVersion = "4.8.0"
+# https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+logbackVersion = "1.4.6"
+# https://github.com/Kotlin/kotlinx.serialization/blob/master/formats/README.md#json
+jsonSerializationVersion = "1.4.1"
+codecVersion = "1.15"
+
+[libraries]
+# Koin
+koin-core = { module = "io.insert-koin:koin-ktor", version.ref = "koinKtorVersion" }
+# Ktor
+ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktorVersion" }
+ktor-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktorVersion" }
+# ktor-core-jvm = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktorVersion" }
+# ktor-netty-jvm = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktorVersion" }
+ktor-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktorVersion" }
+
+ktor-hsts-jvm = { module = "io.ktor:ktor-server-hsts-jvm", version.ref = "ktorVersion" }
+ktor-sessions-jvm = { module = "io.ktor:ktor-server-sessions-jvm", version.ref = "ktorVersion" }
+ktor-host-common-jvm = { module = "io.ktor:ktor-server-host-common-jvm", version.ref = "ktorVersion" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktorVersion" }
+ktor-serialization-kotlinx-json-jvm = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktorVersion" }
+ktor-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktorVersion" }
+ktor-auth-jwt-jvm = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktorVersion" }
+# KMongo
+kmongo = { module = "org.litote.kmongo:kmongo", version.ref = "kmongoVersion" }
+kmongo-coroutine = { module = "org.litote.kmongo:kmongo-coroutine", version.ref = "kmongoVersion" }
+#SaltingHash
+codec = { module = "commons-codec:commons-codec", version.ref = "codecVersion" }
+# Serialization
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "jsonSerializationVersion" }
+# Logging
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logbackVersion" }
+
+##########################
+## BUNDLES
+##########################
+
+[bundles]
+koin = [
+    "koin-core"
+]
+
+ktor = [
+    "ktor-core",
+    "ktor-netty",
+    "ktor-logging",
+    "ktor-hsts-jvm",
+    "ktor-sessions-jvm",
+    "ktor-host-common-jvm",
+    "ktor-serialization-kotlinx-json-jvm",
+    "ktor-auth-jwt",
+    "ktor-auth-jwt-jvm"
+]
+
+kmongo = [
+    "kmongo",
+    "kmongo-coroutine"
+]
+
+serialization = [
+    "ktor-client-content-negotiation",
+    "kotlinx-serialization"
+]
