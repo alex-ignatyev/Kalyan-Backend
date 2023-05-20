@@ -23,12 +23,13 @@ class AdminAddTobaccoController(
             return
         }
 
-        val isTobaccoWasInserted = db.insertTobaccoToBase(data)
-
-        if (isTobaccoWasInserted) {
-            call.respond(HttpStatusCode.Created, "Tobacco successfully added")
-        } else {
-            call.respond(HttpStatusCode.BadRequest, "Tobacco was not added")
+        try {
+            db.insertTobaccoToBase(data)
+        } catch (e: Exception) {
+            call.respond(HttpStatusCode.BadRequest, e.message ?: "Tobacco was not added")
+            return
         }
+
+        call.respond(HttpStatusCode.Created, "Tobacco successfully added")
     }
 }

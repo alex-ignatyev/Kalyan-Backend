@@ -1,8 +1,5 @@
 package com.kalyan.model.dto.tobacco
 
-import com.kalyan.model.table.TobaccoRatingGeneralTable
-import com.kalyan.model.table.TobaccoTable
-import com.kalyan.util.getCompanyLogo
 import kotlinx.serialization.Serializable
 
 @Serializable

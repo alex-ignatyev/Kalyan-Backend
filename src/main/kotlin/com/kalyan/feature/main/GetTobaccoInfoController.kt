@@ -1,7 +1,7 @@
 package com.kalyan.feature.main
 
+import com.kalyan.db.TobaccosDatabase
 import com.kalyan.model.dto.tobacco.TobaccoInfoRequest
-import com.kalyan.repository.TobaccoRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receiveNullable
@@ -9,7 +9,7 @@ import io.ktor.server.response.respond
 
 class GetTobaccoInfoController(
     private val call: ApplicationCall,
-    private val repo: TobaccoRepository
+    private val db: TobaccosDatabase
 ) {
 
     suspend fun invoke() {
@@ -18,7 +18,7 @@ class GetTobaccoInfoController(
             return
         }
 
-        val response = repo.getTobaccoInfo(userId = data.userId, tobaccoId = data.tobaccoId)
+        val response = db.getTobaccoById(data.tobaccoId)
         if (response == null) {
             call.respond(HttpStatusCode.BadRequest)
         } else {

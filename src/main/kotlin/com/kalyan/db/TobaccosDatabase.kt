@@ -1,211 +1,86 @@
 package com.kalyan.db
 
+import com.kalyan.model.dto.tobacco.TobaccoFeedResponse
+import com.kalyan.model.dto.tobacco.TobaccoInfoResponse
 import com.kalyan.model.dto.tobacco.TobaccoVoteRequest
-import com.kalyan.model.table.TobaccoRatingGeneralTable
-import com.kalyan.model.table.TobaccoRatingUserTable
-import com.kalyan.model.table.TobaccoTable
-import org.jetbrains.exposed.sql.Database
+import com.kalyan.model.table.Companies
+import com.kalyan.model.table.Lines
+import com.kalyan.model.table.Tobacco
+import com.kalyan.model.table.TobaccoRating
+import com.kalyan.model.table.TobaccoRatings
+import com.kalyan.model.table.Tobaccos
+import com.kalyan.model.table.User
+import com.kalyan.util.getCompanyLogo
+import com.kalyan.util.toUUID
+import java.util.UUID
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 
 class TobaccosDatabaseImpl : TobaccosDatabase {
 
-    override suspend fun getTobaccos(): List<TobaccoTable> {
-        return emptyList()
-    }
-
-    override suspend fun getTobaccoById(tobaccoId: String): TobaccoTable? {
-        return null
-    }
-
-    override suspend fun getTobaccosVotedByUser(): List<TobaccoRatingUserTable> {
-        return emptyList()
-    }
-
-    override suspend fun getTobaccoVotedByUserWithId(userId: String): TobaccoRatingUserTable? {
-        return null //tobaccoRatingUserTable.findOne(TobaccoRatingUserTable::userId eq ObjectId(userId))
-    }
-
-    override suspend fun getTobaccosVotedByUsers(): List<TobaccoRatingGeneralTable> {
-        return emptyList()
-    }
-
-    override suspend fun getTobaccoVotedByUsersWithId(tobaccoId: String): TobaccoRatingGeneralTable? {
-        return null //tobaccoVotedByUsersTable.findOne(TobaccoRatingGeneralTable::tobaccoId eq ObjectId(tobaccoId))
-    }
-
-    override suspend fun insertTobaccoRatingForUsers(tobaccoId: String): Boolean {
-        //val results = tobaccoVotedByUserTable.aggregate<TobaccoVotedByUserTable>(TobaccoVotedByUserTable::votedTobaccos contains tobaccoId)
-
-
-/*        val a = tobaccoVotedByUsersTable.findOne(TobaccoVotedByUsersTable::tobaccoId eq ObjectId(tobaccoId))
-
-        return if (a == null) {
-            TobaccoVotedByUsersTable(
-                tobaccoId = ObjectId(tobaccoId),
-                strengthByUsers = results.,
-                smokinessByUsers =,
-                aromaByUsers =,
-                tastePowerByUsers =,
-                ratingByUsers =,
-                votes = 1
-            )
-            true
-        } else {
-            val b = a.copy(
-                strengthByUsers =,
-                smokinessByUsers =,
-                aromaByUsers =,
-                tastePowerByUsers =,
-                ratingByUsers =,
-                votes =
-            )
-            true
-        }*/
-
-        return true
-    }
-
-    override suspend fun insertTobaccoRatingForUsers(request: TobaccoVoteRequest): Boolean {
-        /*val user = userTable.findOneById(ObjectId(request.userId)) ?: return false
-        val tobacco = tobaccoTable.findOneById(ObjectId(request.tobaccoId)) ?: return false
-        val tobaccoByUsers = tobaccoByUsersTable.findOne(TobaccoByUsersTable::tobaccoId eq ObjectId(request.tobaccoId)) ?: kotlin.run {
-                val newTable = TobaccoByUsersTable(tobaccoId = ObjectId(request.tobaccoId))
-                tobaccoByUsersTable.insertOne(newTable)
-                newTable
-            }
-        val tobaccoByUser = tobaccoByUserTable.findOne(TobaccoByUserTable::userId eq ObjectId(request.userId))
-
-        val newTobaccoByUser = TobaccoByUser(
-            tobaccoId = ObjectId(request.tobaccoId),
-            strengthByUser = request.strength,
-            smokinessByUser = request.smokiness,
-            aromaByUser = request.aroma,
-            tastePowerByUser = request.tastePower,
-            ratingByUser = request.rating
-        )
-
-
-        //TODO после 1го головсования не переголосовывается
-        val newTobaccos = tobaccoByUser.votedTobaccos.toMutableList()
-        val dropped = newTobaccos.dropWhile { it.tobaccoId.toString() == request.tobaccoId }.toMutableList()
-        dropped.add(newTobaccoByUser)
-        val newTable = tobaccoByUser.copy(votedTobaccos = dropped)
-        tobaccoByUserTable.updateOne(newTable).wasAcknowledged()
-
-        val newTobaccoByUserTable = TobaccoByUserTable(
-            userId = user.id,
-            votedTobaccos = listOf(newTobaccoByUser)
-        )
-        val isTobaccoByUserTableInserted = tobaccoByUserTable.insertOne(newTobaccoByUserTable).wasAcknowledged()
-        if (isTobaccoByUserTableInserted) {
-            val newVotes = tobaccoByUsers.votes + 1
-            val newTobaccoByUsersTable = tobaccoByUsers.copy(
-                strengthByUsers = (tobaccoByUsers.strengthByUsers + request.strength) / newVotes,
-                smokinessByUsers = (tobaccoByUsers.smokinessByUsers + request.smokiness) / newVotes,
-                aromaByUsers = (tobaccoByUsers.aromaByUsers + request.aroma) / newVotes,
-                tastePowerByUsers = (tobaccoByUsers.tastePowerByUsers + request.tastePower) / newVotes,
-                ratingByUsers = (tobaccoByUsers.ratingByUsers + request.rating) / newVotes,
-                votes = newVotes
-            )
-            return tobaccoByUsersTable.updateOne(newTobaccoByUsersTable).wasAcknowledged()
-        }*/
-
-        return false
-    }
-
-    override suspend fun insertTobaccoProperties(request: TobaccoVoteRequest): Boolean {
-        /*val tobacco = tobaccoRatingUserTable.findOne(TobaccoRatingUserTable::userId eq ObjectId(request.userId))
-        if (tobacco == null) {
-            createTobaccoVotedByUser(request)
-        } else {
-            val votedTobaccos = tobacco.votedTobaccos.find { it.tobaccoId.toString() == request.tobaccoId }
-            val newVotedTobaccos = tobacco.votedTobaccos.toMutableList()
-            if (votedTobaccos == null) {
-                newVotedTobaccos.add(
-                    TobaccoByUser(
-                        tobaccoId = ObjectId(request.tobaccoId),
-                        strengthByUser = request.strength,
-                        smokinessByUser = request.smokiness,
-                        aromaByUser = request.aroma,
-                        tastePowerByUser = request.tastePower,
-                        ratingByUser = request.rating
-                    )
+    override suspend fun getTobaccos(): List<TobaccoFeedResponse> {
+        return transaction {
+            SchemaUtils.create(Companies, Lines, Tobaccos, TobaccoRatings)
+            Tobacco.all().map {
+                TobaccoFeedResponse(
+                    id = it.id.value.toString(),
+                    taste = it.taste,
+                    company = it.company.company,
+                    line = it.line.line,
+                    image = getCompanyLogo(it.company.company),
+                    rating = if (it.ratings.count() == 0L) 0f else (it.ratings.sumOf { it.value } / it.ratings.count()).toFloat(),
+                    votes = it.ratings.count().toInt()
                 )
-                tobaccoRatingUserTable.updateOne(tobacco.copy(votedTobaccos = newVotedTobaccos))
+            }
+        }
+    }
+
+    override suspend fun getTobaccoById(tobaccoId: String): TobaccoInfoResponse? {
+        return transaction {
+            val tobacco = Tobacco.findById(UUID.fromString(tobaccoId)) ?: return@transaction null
+
+            TobaccoInfoResponse(
+                id = tobacco.id.value.toString(),
+                taste = tobacco.taste,
+                company = tobacco.company.company,
+                line = tobacco.line.line,
+                strengthByCompany = tobacco.strengthByCompany,
+                votes = tobacco.ratings.count().toInt()
+            )
+        }
+    }
+
+    override suspend fun voteTobacco(request: TobaccoVoteRequest) {
+        transaction {
+            SchemaUtils.create(TobaccoRatings)
+            val tobacco = Tobacco.findById(request.tobaccoId.toUUID()) ?: return@transaction
+            val user = User.findById(request.userId.toUUID()) ?: return@transaction
+            val rating =
+                TobaccoRating.find { TobaccoRatings.user eq request.userId.toUUID() and (TobaccoRatings.tobacco eq request.tobaccoId.toUUID()) }
+                    .firstOrNull()
+
+            if (rating == null) {
+                TobaccoRatings.insert {
+                    it[value] = request.rating.toLong()
+                    it[this.tobacco] = tobacco.id
+                    it[this.user] = user.id
+                }
             } else {
-                val droppedList =
-                    newVotedTobaccos.dropWhile { it.tobaccoId.toString() == request.tobaccoId }.toMutableList()
-                droppedList.add(
-                    TobaccoByUser(
-                        tobaccoId = ObjectId(request.tobaccoId),
-                        strengthByUser = request.strength,
-                        smokinessByUser = request.smokiness,
-                        aromaByUser = request.aroma,
-                        tastePowerByUser = request.tastePower,
-                        ratingByUser = request.rating
-                    )
-                )
-                return tobaccoRatingUserTable.updateOne(tobacco.copy(votedTobaccos = droppedList)).wasAcknowledged()
+                TobaccoRatings.update {
+                    it[value] = request.rating.toLong()
+                    it[this.tobacco] = tobacco.id
+                    it[this.user] = user.id
+                }
             }
-        }*/
-        return false
-    }
-
-    private suspend fun createTobaccoVotedByUser(request: TobaccoVoteRequest): Boolean {
-/*        val user = userTable.findOneById(ObjectId(request.userId)) ?: return false
-        return tobaccoRatingUserTable.insertOne(
-            TobaccoRatingUserTable(
-                userId = ObjectId(request.userId),
-                userName = user.name,
-                votedTobaccos = listOf(
-                    TobaccoByUser(
-                        tobaccoId = ObjectId(request.tobaccoId),
-                        strengthByUser = request.strength,
-                        smokinessByUser = request.smokiness,
-                        aromaByUser = request.aroma,
-                        tastePowerByUser = request.tastePower,
-                        ratingByUser = request.rating
-                    )
-                )
-            )
-        ).wasAcknowledged()*/
-        return true
-    }
-
-    override suspend fun insertTobaccoFavorite(userId: String, tobaccoId: String): Boolean {
-        /*val favoritesTable = favorites.findOne(FavoriteTobaccoTable::userId eq userId)
-        return if (favoritesTable?.favoritesTobaccoIds?.contains(tobaccoId) == true) {
-            val newFavorites = favoritesTable.favoritesTobaccoIds.dropWhile { it == tobaccoId }
-            val tobaccosToBeUpdate = favoritesTable.copy(favoritesTobaccoIds = newFavorites)
-            favorites.updateOneById(favoritesTable.id, tobaccosToBeUpdate).wasAcknowledged()
-        } else {
-            val newTable = FavoriteTobaccoTable(userId = userId, favoritesTobaccoIds = listOf(tobaccoId))
-            favorites.insertOne(newTable).wasAcknowledged()
-        }*/
-        return false
-    }
-
-    override suspend fun insertTobaccoProperties() {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun insertTobaccoRating() {
-        TODO("Not yet implemented")
+        }
     }
 }
 
 interface TobaccosDatabase {
-    suspend fun getTobaccos(): List<TobaccoTable>
-    suspend fun getTobaccoById(tobaccoId: String): TobaccoTable?
-    suspend fun getTobaccosVotedByUser(): List<TobaccoRatingUserTable>
-    suspend fun getTobaccoVotedByUserWithId(userId: String): TobaccoRatingUserTable?
-    suspend fun getTobaccosVotedByUsers(): List<TobaccoRatingGeneralTable>
-    suspend fun getTobaccoVotedByUsersWithId(tobaccoId: String): TobaccoRatingGeneralTable?
-
-    suspend fun insertTobaccoRatingForUsers(tobaccoId: String): Boolean
-    suspend fun insertTobaccoRatingForUsers(request: TobaccoVoteRequest): Boolean
-    suspend fun insertTobaccoProperties(request: TobaccoVoteRequest): Boolean
-
-    suspend fun insertTobaccoFavorite(userId: String, tobaccoId: String): Boolean
-    suspend fun insertTobaccoProperties()
-    suspend fun insertTobaccoRating()
+    suspend fun getTobaccos(): List<TobaccoFeedResponse>
+    suspend fun getTobaccoById(tobaccoId: String): TobaccoInfoResponse?
+    suspend fun voteTobacco(request: TobaccoVoteRequest)
 }

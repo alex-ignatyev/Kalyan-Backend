@@ -1,15 +1,15 @@
 package com.kalyan.feature.main
 
+import com.kalyan.db.TobaccosDatabase
 import com.kalyan.model.dto.tobacco.TobaccoVoteRequest
-import com.kalyan.repository.TobaccoRepository
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.request.receiveNullable
 import io.ktor.server.response.respond
 
-class PutTobaccoPropertiesController(
+class PutTobaccoVoteController(
     private val call: ApplicationCall,
-    private val repo: TobaccoRepository
+    private val db: TobaccosDatabase
 ) {
 
     suspend fun invoke() {
@@ -18,6 +18,6 @@ class PutTobaccoPropertiesController(
             return
         }
 
-        call.respond(HttpStatusCode.OK, repo.insertTobaccoProperties(data))
+        call.respond(HttpStatusCode.OK, db.voteTobacco(data))
     }
 }

@@ -1,6 +1,5 @@
 package com.kalyan.model.dto.admin
 
-import com.kalyan.model.table.TobaccoTable
 import kotlinx.serialization.Serializable
 
 @Serializable

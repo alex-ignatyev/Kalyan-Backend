@@ -1,7 +1,6 @@
 package com.kalyan.feature.admin
 
 import com.kalyan.db.AdminDatabase
-import com.kalyan.db.TobaccosDatabase
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.routing.Routing

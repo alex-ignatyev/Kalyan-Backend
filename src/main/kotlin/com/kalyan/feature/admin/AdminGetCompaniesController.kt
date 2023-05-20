@@ -11,6 +11,6 @@ class AdminGetCompaniesController(
 ) {
 
     suspend fun invoke() {
-        //call.respond(HttpStatusCode.OK, db.getCompanies().toDto().sortedBy { it.companyName })
+        call.respond(HttpStatusCode.OK, db.getCompanies())
     }
 }

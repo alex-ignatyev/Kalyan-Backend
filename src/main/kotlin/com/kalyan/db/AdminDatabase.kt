@@ -1,51 +1,47 @@
 package com.kalyan.db
 
 import com.kalyan.model.dto.admin.AdminAddTobaccoRequest
-import com.kalyan.model.table.CompanyTable
-import org.jetbrains.exposed.sql.Database
+import com.kalyan.model.dto.admin.AdminCompaniesResponse
+import com.kalyan.model.table.Companies
+import com.kalyan.model.table.Company
+import com.kalyan.model.table.Line
+import com.kalyan.model.table.Lines
+import com.kalyan.model.table.Tobaccos
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insertAndGetId
+import org.jetbrains.exposed.sql.transactions.transaction
 
 class AdminDatabaseImpl : AdminDatabase {
 
-    override suspend fun insertTobaccoToBase(request: AdminAddTobaccoRequest): Boolean {
-        /*  val tobacco = tobaccos.findOne(
-              AdminAddTobaccoRequest::company eq request.company,
-              AdminAddTobaccoRequest::taste eq request.taste
-          )*/
-
-        return true /*if (tobacco == null) {
-            createNewTobacco(request)
-        } else {
-            tobaccoVotedByUsers.findOneById(tobacco.id) ?: kotlin.run {
-                val isTobaccoByUsersInserted =
-                    tobaccoVotedByUsers.insertOne(TobaccoVotedByUsersTable(tobaccoId = tobacco.id)).wasAcknowledged()
-                if (!isTobaccoByUsersInserted) {
-                    deleteTobacco(tobacco.id)
-                }
+    override suspend fun insertTobaccoToBase(request: AdminAddTobaccoRequest) {
+        return transaction {
+            SchemaUtils.create(Tobaccos)
+            val company = Company.find { Companies.company eq request.company }.first()
+            val line = Line.find { Lines.line eq request.line }.first()
+            Tobaccos.insertAndGetId {
+                it[taste] = request.taste
+                it[this.company] = company.id
+                it[this.line] = line.id
+                it[strengthByCompany] = request.strengthByCompany
             }
-
-            true
-        }*/
+        }
     }
 
-    private suspend fun createNewTobacco(request: AdminAddTobaccoRequest): Boolean {
-        /*val newTobacco = request.toTable()
-
-        val isTobaccoInserted = tobaccos.insertOne(newTobacco).wasAcknowledged()
-        val isTobaccoByUsersInserted =
-            tobaccoVotedByUsers.insertOne(TobaccoVotedByUsersTable(tobaccoId = newTobacco.id)).wasAcknowledged()
-
-        if (!(isTobaccoInserted && isTobaccoByUsersInserted)) {
-            deleteTobacco(newTobacco.id)
-        }*/
-        return true
-    }
-
-    override suspend fun getCompanies(): List<CompanyTable> {
-        return emptyList()
+    override suspend fun getCompanies(): List<AdminCompaniesResponse> {
+        return transaction {
+            SchemaUtils.create(Companies, Lines)
+            Line.all().groupBy { it.company }.map {
+                AdminCompaniesResponse(
+                    id = it.key.id.value.toString(),
+                    companyName = it.key.company,
+                    lines = it.value.map { it.line }.sorted()
+                )
+            }.sortedBy { it.companyName }
+        }
     }
 }
 
 interface AdminDatabase {
-    suspend fun insertTobaccoToBase(request: AdminAddTobaccoRequest): Boolean
-    suspend fun getCompanies(): List<CompanyTable>
+    suspend fun insertTobaccoToBase(request: AdminAddTobaccoRequest)
+    suspend fun getCompanies(): List<AdminCompaniesResponse>
 }

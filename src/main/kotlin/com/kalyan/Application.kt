@@ -8,7 +8,6 @@ import com.kalyan.plugins.configureRouting
 import com.kalyan.plugins.configureSecurity
 import com.kalyan.plugins.configureSerialization
 import io.ktor.server.application.Application
-import org.jetbrains.exposed.sql.Database
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 

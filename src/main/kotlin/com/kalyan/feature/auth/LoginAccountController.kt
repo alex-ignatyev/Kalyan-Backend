@@ -5,7 +5,7 @@ import com.kalyan.model.dto.auth.AccountLoginRequest
 import com.kalyan.model.dto.token.TokenClaim
 import com.kalyan.model.dto.token.TokenConfig
 import com.kalyan.model.dto.token.TokenResponse
-import com.kalyan.model.table.UserTable.Role
+import com.kalyan.model.table.Users.Role
 import com.kalyan.security.hashing.HashingService
 import com.kalyan.security.hashing.SaltedHash
 import com.kalyan.security.token.TokenService
