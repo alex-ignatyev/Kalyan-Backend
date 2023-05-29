@@ -6,7 +6,7 @@ import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 
-object Users : UUIDTable() {
+object Users : UUIDTable("users") {
     val login = text("login")
     val name = text("name").uniqueIndex()
     val saltedPassword = text("salted_password")

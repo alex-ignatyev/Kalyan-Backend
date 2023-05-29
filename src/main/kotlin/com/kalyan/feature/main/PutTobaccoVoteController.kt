@@ -18,6 +18,8 @@ class PutTobaccoVoteController(
             return
         }
 
-        call.respond(HttpStatusCode.OK, db.voteTobacco(data))
+        val answer = db.voteTobacco(data)
+
+        call.respond(answer.statusCode, answer.message)
     }
 }

@@ -10,19 +10,5 @@ data class TobaccoFeedResponse(
     val line: String = "",
     var image: String = "",
     val rating: Float,
-    val votes: Int
+    val votes: Long
 )
-/*
-
-fun mapToTobaccoFeedResponse(from1: TobaccoTable, from2: TobaccoRatingGeneralTable): TobaccoFeedResponse {
-    return TobaccoFeedResponse(
-        id = from1.id.toString(),
-        taste = from1.taste,
-        company = from1.company,
-        line = from1.line,
-        image = getCompanyLogo(from1.company),
-        rating = from2.ratingByUsers,
-        votes = from2.votes
-    )
-}
-*/

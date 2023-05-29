@@ -18,7 +18,7 @@ class GetTobaccoInfoController(
             return
         }
 
-        val response = db.getTobaccoById(data.tobaccoId)
+        val response = db.getTobaccoById(data.tobaccoId, data.userId)
         if (response == null) {
             call.respond(HttpStatusCode.BadRequest)
         } else {

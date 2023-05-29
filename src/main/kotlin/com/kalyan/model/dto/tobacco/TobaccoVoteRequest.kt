@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 data class TobaccoVoteRequest(
     val userId: String,
     val tobaccoId: String,
+    val type: VoteType,
+    val value: Long
+) {
 
-    val strength: Int,
-    val smokiness: Int,
-    val aroma: Int,
-    val tastePower: Int,
-
-    val rating: Int
-)
+    enum class VoteType {
+        Rating, Strength, Smokiness, Aroma, Taste
+    }
+}

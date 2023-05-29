@@ -46,7 +46,8 @@ class CreateAccountController(
             return
         }
 
-        // It's not safety to create user, but we don't have the way to use free sms services
+        //TODO Add email service ?
+        // It's not safety to create user, but we don't have any ways to use free sms services
         // When you have sms service, you can send user to restore password
         val user = try {
             userDb.getUserByLogin(data.login)
@@ -76,7 +77,7 @@ class CreateAccountController(
         try {
             userDb.createUser(newUser)
         } catch (e: Exception) {
-            call.respond(HttpStatusCode.Conflict, e.message ?: "User wasn't created try later")
+            call.respond(HttpStatusCode.Conflict, e.message ?: "User wasn't created, try later")
             return
         }
 

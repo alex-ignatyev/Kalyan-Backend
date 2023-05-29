@@ -23,13 +23,13 @@ class AdminAddTobaccoController(
             return
         }
 
-        try {
+        val result = try {
             db.insertTobaccoToBase(data)
         } catch (e: Exception) {
             call.respond(HttpStatusCode.BadRequest, e.message ?: "Tobacco was not added")
             return
         }
 
-        call.respond(HttpStatusCode.Created, "Tobacco successfully added")
+        call.respond(result.statusCode, result.message)
     }
 }

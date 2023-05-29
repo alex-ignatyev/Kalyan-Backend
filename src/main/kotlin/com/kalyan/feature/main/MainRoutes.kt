@@ -12,7 +12,6 @@ import org.koin.ktor.ext.inject
 
 fun Routing.configureRatingRouting() {
 
-    val db by inject<TobaccosDatabase>()
     val tobaccoDb by inject<TobaccosDatabase>()
 
     get("/") {

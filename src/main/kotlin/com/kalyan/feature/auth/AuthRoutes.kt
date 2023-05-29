@@ -27,7 +27,6 @@ fun Routing.configureAuthRouting() {
         }
     }
 
-
     post("/account_create") {
         CreateAccountController(call, userDb, hashingService).invoke()
     }

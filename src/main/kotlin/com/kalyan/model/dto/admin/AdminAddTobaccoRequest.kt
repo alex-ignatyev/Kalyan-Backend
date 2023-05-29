@@ -4,17 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AdminAddTobaccoRequest(
+    val manual: Boolean,
     val taste: String,
     val company: String,
     val line: String,
     val strengthByCompany: Int
 )
-
-/*fun AdminAddTobaccoRequest.toTable(): TobaccoTable {
-    return TobaccoTable(
-        taste = taste,
-        company = company,
-        line = line,
-        strengthByCompany = strengthByCompany
-    )
-}*/

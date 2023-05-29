@@ -47,7 +47,7 @@ class ForgotAccountController(
             call.respond(HttpStatusCode.Conflict, e.message ?: "Error")
             return
         } ?: kotlin.run {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+            call.respond(HttpStatusCode.Conflict, "Incorrect login")
             return
         }
 

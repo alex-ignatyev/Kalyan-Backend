@@ -7,7 +7,11 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.UUIDTable
 
 object TobaccoRatings : UUIDTable("tobacco_ratings") {
-    val value = long("value").default(0)
+    val rate = long("rate").default(0)
+    val strength = long("strength").default(0)
+    val smokiness = long("smokiness").default(0)
+    val aroma = long("aroma").default(0)
+    val taste = long("taste").default(0)
     val tobacco = reference("tobacco", Tobaccos)
     val user = reference("user", Users)
 }
@@ -15,7 +19,11 @@ object TobaccoRatings : UUIDTable("tobacco_ratings") {
 class TobaccoRating(id: EntityID<UUID>) : UUIDEntity(id) {
     companion object : UUIDEntityClass<TobaccoRating>(TobaccoRatings)
 
-    var value by TobaccoRatings.value
+    var rate by TobaccoRatings.rate
+    var strength by TobaccoRatings.strength
+    var smokiness by TobaccoRatings.smokiness
+    var aroma by TobaccoRatings.aroma
+    var taste by TobaccoRatings.taste
     var tobacco by Tobacco referencedOn TobaccoRatings.tobacco
     var user by User referencedOn TobaccoRatings.user
 }

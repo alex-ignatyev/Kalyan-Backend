@@ -49,11 +49,11 @@ class LoginAccountController(
             call.respond(HttpStatusCode.BadRequest, e.message ?: "Error")
             return
         } ?: kotlin.run {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+            call.respond(HttpStatusCode.Conflict, "Incorrect login or password")
             return
         }
 
-        val isValidPassword = hashingService.verify(
+        val isPasswordValid = hashingService.verify(
             value = data.password,
             saltedHash = SaltedHash(
                 hash = user.saltedPassword,
@@ -61,8 +61,8 @@ class LoginAccountController(
             )
         )
 
-        if (!isValidPassword) {
-            call.respond(HttpStatusCode.Conflict, "Incorrect username or password")
+        if (!isPasswordValid) {
+            call.respond(HttpStatusCode.Conflict, "Incorrect login or password")
             return
         }
 
