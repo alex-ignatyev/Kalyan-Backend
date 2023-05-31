@@ -19,7 +19,7 @@ class UsersDatabaseImpl : UsersDatabase {
                 it[name] = user.name
                 it[saltedPassword] = user.saltedPassword
                 it[salt] = user.salt
-                it[role] = "Admin"
+                it[role] = "Admin" //TODO временно
             }
         }
     }

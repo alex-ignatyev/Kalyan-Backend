@@ -18,7 +18,7 @@ class AdminAddTobaccoController(
             return
         }
 
-        if (data.taste.isBlank() || data.company.isBlank() || data.strengthByCompany == 0) {
+        if (data.taste.isBlank() || data.company.isBlank() || data.strength == 0L) {
             call.respond(HttpStatusCode.BadRequest, "All tobacco info should be filled")
             return
         }

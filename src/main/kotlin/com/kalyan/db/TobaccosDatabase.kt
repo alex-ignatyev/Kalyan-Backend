@@ -30,15 +30,15 @@ class TobaccosDatabaseImpl : TobaccosDatabase {
     override suspend fun getTobaccos(): List<TobaccoFeedResponse> {
         return transaction {
             SchemaUtils.create(Companies, Lines, Tobaccos, TobaccoRatings)
-            Tobacco.all().map {
+            Tobacco.all().map { tobacco ->
                 TobaccoFeedResponse(
-                    id = it.id.value.toString(),
-                    taste = it.taste,
-                    company = it.company.company,
-                    line = it.line.line,
-                    image = getCompanyLogo(it.company.company),
-                    rating = if (it.ratings.count() == 0L) 0f else (it.ratings.sumOf { it.rate } / it.ratings.count()).toFloat(),
-                    votes = it.ratings.count()
+                    id = tobacco.id.toString(),
+                    taste = tobacco.taste,
+                    company = tobacco.company.name,
+                    line = tobacco.line.name,
+                    image = getCompanyLogo(tobacco.company.name),
+                    rating = if (tobacco.ratings.count() == 0L) 0f else (tobacco.ratings.sumOf { it.rate } / tobacco.ratings.count()).toFloat(),
+                    votes = tobacco.ratings.count()
                 )
             }
         }
@@ -48,47 +48,50 @@ class TobaccosDatabaseImpl : TobaccosDatabase {
         return transaction {
             val tobacco = Tobacco.findById(tobaccoId.toUUID()) ?: return@transaction null
             val user = User.findById(userId.toUUID()) ?: return@transaction null
-            val rating = TobaccoRating.find { TobaccoRatings.user eq user.id }.firstOrNull() ?: return@transaction null
+            val ratingByUser =
+                TobaccoRating.find { TobaccoRatings.user eq user.id }.firstOrNull() ?: return@transaction null
 
             TobaccoInfoResponse(
-                id = tobacco.id.value.toString(),
+                id = tobacco.id.toString(),
                 taste = tobacco.taste,
-                company = tobacco.company.company,
-                line = tobacco.line.line,
-                strengthByCompany = tobacco.strengthByCompany,
+                company = tobacco.company.name,
+                line = tobacco.line.name,
+                strength = tobacco.strength,
 
                 ratingByUsers = if (tobacco.ratings.count() == 0L) 0f else (tobacco.ratings.sumOf { it.rate } / tobacco.ratings.count()).toFloat(),
 
-                ratingByUser = rating.rate,
-                strengthByUser = rating.strength,
-                smokinessByUser = rating.smokiness,
-                aromaByUser = rating.aroma,
-                tasteByUser = rating.taste,
+                ratingByUser = ratingByUser.rate,
+                strengthByUser = ratingByUser.strength,
+                smokinessByUser = ratingByUser.smokiness,
+                aromaByUser = ratingByUser.aroma,
+                tasteByUser = ratingByUser.taste,
+
                 votes = tobacco.ratings.count()
             )
         }
     }
 
-    override suspend fun voteTobacco(request: TobaccoVoteRequest): Answer {
+    //TODO Отрефакторить
+    override suspend fun insertOrUpdateTobaccoRating(request: TobaccoVoteRequest, userId: String): Answer {
         return transaction {
             SchemaUtils.create(TobaccoRatings)
-            val tobacco = Tobacco.findById(request.tobaccoId.toUUID()) ?: return@transaction Answer(
+            val tobaccoFromDb = Tobacco.findById(request.tobaccoId.toUUID()) ?: return@transaction Answer(
                 HttpStatusCode.BadRequest,
-                "Tobacco isn't exist"
+                "Tobacco doesn't exist"
             )
-            val user = User.findById(request.userId.toUUID()) ?: return@transaction Answer(
+            val userFromDb = User.findById(userId.toUUID()) ?: return@transaction Answer(
                 HttpStatusCode.BadRequest,
-                "User isn't exist"
+                "Tobacco doesn't exist"
             )
             val rating = TobaccoRating.find {
-                TobaccoRatings.user eq request.userId.toUUID() and
+                TobaccoRatings.user eq userId.toUUID() and
                         (TobaccoRatings.tobacco eq request.tobaccoId.toUUID())
             }.firstOrNull()
 
             if (rating == null) {
                 TobaccoRatings.insert {
-                    it[this.tobacco] = tobacco.id
-                    it[this.user] = user.id
+                    it[tobacco] = tobaccoFromDb.id
+                    it[user] = userFromDb.id
                     when (request.type) {
                         Rating -> it[rate] = request.value
                         Strength -> it[strength] = request.value
@@ -99,8 +102,8 @@ class TobaccosDatabaseImpl : TobaccosDatabase {
                 }
             } else {
                 TobaccoRatings.update {
-                    it[this.tobacco] = tobacco.id
-                    it[this.user] = user.id
+                    it[tobacco] = tobaccoFromDb.id
+                    it[user] = userFromDb.id
                     when (request.type) {
                         Rating -> it[rate] = request.value
                         Strength -> it[strength] = request.value
@@ -119,5 +122,5 @@ class TobaccosDatabaseImpl : TobaccosDatabase {
 interface TobaccosDatabase {
     suspend fun getTobaccos(): List<TobaccoFeedResponse>
     suspend fun getTobaccoById(tobaccoId: String, userId: String): TobaccoInfoResponse?
-    suspend fun voteTobacco(request: TobaccoVoteRequest): Answer
+    suspend fun insertOrUpdateTobaccoRating(request: TobaccoVoteRequest, userId: String): Answer
 }

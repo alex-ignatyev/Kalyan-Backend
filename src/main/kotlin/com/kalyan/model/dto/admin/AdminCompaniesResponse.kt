@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AdminCompaniesResponse(
     val id: String,
-    val companyName: String,
+    val company: String,
     val lines: List<String>
 )

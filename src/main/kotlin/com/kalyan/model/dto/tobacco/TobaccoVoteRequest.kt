@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TobaccoVoteRequest(
-    val userId: String,
     val tobaccoId: String,
     val type: VoteType,
     val value: Long

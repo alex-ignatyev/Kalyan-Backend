@@ -18,7 +18,12 @@ class PutTobaccoVoteController(
             return
         }
 
-        val answer = db.voteTobacco(data)
+        val userId = call.request.queryParameters["userId"] ?: kotlin.run {
+            call.respond(HttpStatusCode.BadRequest, "User doesn't exist")
+            return
+        }
+
+        val answer = db.insertOrUpdateTobaccoRating(data, userId)
 
         call.respond(answer.statusCode, answer.message)
     }

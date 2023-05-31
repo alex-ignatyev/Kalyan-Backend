@@ -8,7 +8,7 @@ import org.jetbrains.exposed.dao.id.UUIDTable
 
 object Users : UUIDTable("users") {
     val login = text("login")
-    val name = text("name").uniqueIndex()
+    val name = text("name")
     val saltedPassword = text("salted_password")
     val salt = text("salt")
     val role = text("role")

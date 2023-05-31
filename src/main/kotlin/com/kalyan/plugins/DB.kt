@@ -25,16 +25,16 @@ fun Application.configureDB() {
         SchemaUtils.create(Companies, Lines)
 
         getCompaniesAndLines().forEach { (companyKey, linesValue) ->
-            val isCompanyExist = Company.find { Companies.company eq companyKey }.firstOrNull() != null
+            val isCompanyExist = Company.find { Companies.name eq companyKey }.firstOrNull() != null
             if (isCompanyExist) return@forEach
 
             val companyId = Companies.insertAndGetId {
-                it[company] = companyKey
+                it[name] = companyKey
             }
 
             Lines.batchInsert(linesValue) { line ->
                 this[Lines.company] = companyId
-                this[Lines.line] = line
+                this[Lines.name] = line
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.kalyan.model.table
 
+import com.kalyan.model.table.TobaccoRatings.default
 import java.util.UUID
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -10,7 +11,7 @@ object Tobaccos : UUIDTable("tobaccos") {
     val taste = text("taste")
     val company = reference("company", Companies)
     val line = reference("line", Lines)
-    val strengthByCompany = integer("strength_by_company")
+    val strength = long("strength").default(0L)
 }
 
 class Tobacco(id: EntityID<UUID>) : UUIDEntity(id) {
@@ -19,6 +20,6 @@ class Tobacco(id: EntityID<UUID>) : UUIDEntity(id) {
     var taste by Tobaccos.taste
     var company by Company referencedOn Tobaccos.company
     var line by Line referencedOn Tobaccos.line
-    var strengthByCompany by Tobaccos.strengthByCompany
+    var strength by Tobaccos.strength
     val ratings by TobaccoRating referrersOn TobaccoRatings.tobacco
 }

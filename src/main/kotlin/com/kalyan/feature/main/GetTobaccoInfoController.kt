@@ -18,7 +18,13 @@ class GetTobaccoInfoController(
             return
         }
 
-        val response = db.getTobaccoById(data.tobaccoId, data.userId)
+        val userId = call.request.queryParameters["userId"] ?: kotlin.run {
+            call.respond(HttpStatusCode.BadRequest, "User doesn't exist")
+            return
+        }
+
+        val response = db.getTobaccoById(data.tobaccoId, userId)
+
         if (response == null) {
             call.respond(HttpStatusCode.BadRequest)
         } else {

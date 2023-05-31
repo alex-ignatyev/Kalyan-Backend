@@ -8,10 +8,9 @@ data class TobaccoInfoResponse(
     val taste: String,
     val company: String,
     val line: String = "",
+    val strength: Long,
 
     var image: String = "",
-
-    val strengthByCompany: Int,
 
     val strengthByUsers: Float = 0f,
     val smokinessByUsers: Float = 0f,
